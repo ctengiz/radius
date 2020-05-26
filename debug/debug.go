@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
+	"github.com/ctengiz/radius/rfc2865"
 	"io"
 	"net"
 	"sort"
@@ -55,6 +56,7 @@ func DumpRequestString(c *Config, req *radius.Request) string {
 }
 
 func dumpAttrs(w io.Writer, c *Config, p *radius.Packet) {
+	var dictAttr *dictionary.Attribute
 	for _, elem := range sortedAttributes(p.Attributes) {
 		attrsType, attrs := elem.Type, elem.Attrs
 		if len(attrs) == 0 {
@@ -69,7 +71,26 @@ func dumpAttrs(w io.Writer, c *Config, p *radius.Packet) {
 			searchAttrs := c.Dictionary.Attributes
 			searchValues := c.Dictionary.Values
 
-			dictAttr := dictionary.AttributeByOID(searchAttrs, dictionary.OID{int(attrsType)})
+			dictAttr = nil
+			if attrsType == rfc2865.VendorSpecific_Type {
+				vendorID, vsa, err := radius.VendorSpecific(attr)
+				if err == nil {
+					vendor := dictionary.VendorByNumber(c.Dictionary.Vendors, int(vendorID))
+					if vendor != nil {
+						if len(vsa) >= 3 {
+							vsaTyp := vsa[0]
+							attr = vsa[2:]
+							dictAttr = dictionary.AttributeByOID(vendor.Attributes, dictionary.OID{int(vsaTyp)})
+						}
+					}
+				}
+			}
+
+			//c.Dictionary.Vendors
+			if dictAttr == nil {
+				dictAttr = dictionary.AttributeByOID(searchAttrs, dictionary.OID{int(attrsType)})
+			}
+
 			if dictAttr != nil {
 				attrTypeStr = dictAttr.Name
 				switch dictAttr.Type {
