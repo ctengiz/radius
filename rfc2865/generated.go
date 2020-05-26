@@ -6,7 +6,7 @@ import (
 	"net"
 	"strconv"
 
-	"layeh.com/radius"
+	"github.com/ctengiz/radius"
 )
 
 const (

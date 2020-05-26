@@ -5,7 +5,7 @@ package rfc2866
 import (
 	"strconv"
 
-	"layeh.com/radius"
+	"github.com/ctengiz/radius"
 )
 
 const (
