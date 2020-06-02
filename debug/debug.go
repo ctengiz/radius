@@ -57,110 +57,106 @@ func DumpRequestString(c *Config, req *radius.Request) string {
 
 func dumpAttrs(w io.Writer, c *Config, p *radius.Packet) {
 	var dictAttr *dictionary.Attribute
-	for _, elem := range sortedAttributes(p.Attributes) {
-		attrsType, attrs := elem.Type, elem.Attrs
-		if len(attrs) == 0 {
-			continue
-		}
+	for _, avp := range p.Attributes {
+		var attrTypeStr string
+		var attrStr string
 
-		for _, attr := range attrs {
+		searchAttrs := c.Dictionary.Attributes
+		searchValues := c.Dictionary.Values
 
-			var attrTypeStr string
-			var attrStr string
+		attrsType, attr := avp.Type, avp.Attribute
 
-			searchAttrs := c.Dictionary.Attributes
-			searchValues := c.Dictionary.Values
-
-			dictAttr = nil
-			if attrsType == rfc2865.VendorSpecific_Type {
-				vendorID, vsa, err := radius.VendorSpecific(attr)
-				if err == nil {
-					vendor := dictionary.VendorByNumber(c.Dictionary.Vendors, int(vendorID))
-					if vendor != nil {
-						if len(vsa) >= 3 {
-							vsaTyp := vsa[0]
-							attr = vsa[2:]
-							dictAttr = dictionary.AttributeByOID(vendor.Attributes, dictionary.OID{int(vsaTyp)})
-						}
+		dictAttr = nil
+		if attrsType == rfc2865.VendorSpecific_Type {
+			vendorID, vsa, err := radius.VendorSpecific(attr)
+			if err == nil {
+				vendor := dictionary.VendorByNumber(c.Dictionary.Vendors, int(vendorID))
+				if vendor != nil {
+					if len(vsa) >= 3 {
+						vsaTyp := vsa[0]
+						attr = vsa[2:]
+						dictAttr = dictionary.AttributeByOID(vendor.Attributes, dictionary.OID{int(vsaTyp)})
 					}
 				}
 			}
+		}
 
-			//c.Dictionary.Vendors
-			if dictAttr == nil {
-				dictAttr = dictionary.AttributeByOID(searchAttrs, dictionary.OID{int(attrsType)})
-			}
+		//c.Dictionary.Vendors
+		if dictAttr == nil {
+			dictAttr = dictionary.AttributeByOID(searchAttrs, dictionary.OID{int(avp.Type)})
+		}
 
-			if dictAttr != nil {
-				attrTypeStr = dictAttr.Name
-				switch dictAttr.Type {
-				case dictionary.AttributeString, dictionary.AttributeOctets:
-					if dictAttr != nil && dictAttr.FlagEncrypt.Valid && dictAttr.FlagEncrypt.Int == 1 {
-						decryptedValue, err := radius.UserPassword(attr, p.Secret, p.Authenticator[:])
-						if err == nil {
-							attrStr = fmt.Sprintf("%q", decryptedValue)
+		if dictAttr != nil {
+			attrTypeStr = dictAttr.Name
+			switch dictAttr.Type {
+			case dictionary.AttributeString, dictionary.AttributeOctets:
+				if dictAttr != nil && dictAttr.FlagEncrypt.Valid && dictAttr.FlagEncrypt.Int == 1 {
+					decryptedValue, err := radius.UserPassword(attr, p.Secret, p.Authenticator[:])
+					if err == nil {
+						attrStr = fmt.Sprintf("%q", decryptedValue)
+						break
+					}
+				}
+				attrStr = fmt.Sprintf("%q", attr)
+
+			case dictionary.AttributeDate:
+				if len(attr) == 4 {
+					t := time.Unix(int64(binary.BigEndian.Uint32(attr)), 0).UTC()
+					attrStr = t.Format(time.RFC3339)
+				}
+
+			case dictionary.AttributeInteger:
+				switch len(attr) {
+				case 4:
+					intVal := uint64(binary.BigEndian.Uint32(attr))
+					if dictAttr != nil {
+						var matchedNames []string
+						for _, value := range dictionary.ValuesByAttribute(searchValues, dictAttr.Name) {
+							if value.Number == intVal {
+								matchedNames = append(matchedNames, value.Name)
+							}
+						}
+						if len(matchedNames) > 0 {
+							sort.Stable(sort.StringSlice(matchedNames))
+							attrStr = strings.Join(matchedNames, " / ")
 							break
 						}
 					}
-					attrStr = fmt.Sprintf("%q", attr)
-
-				case dictionary.AttributeDate:
-					if len(attr) == 4 {
-						t := time.Unix(int64(binary.BigEndian.Uint32(attr)), 0).UTC()
-						attrStr = t.Format(time.RFC3339)
-					}
-
-				case dictionary.AttributeInteger:
-					switch len(attr) {
-					case 4:
-						intVal := int(binary.BigEndian.Uint32(attr))
-						if dictAttr != nil {
-							var matchedNames []string
-							for _, value := range dictionary.ValuesByAttribute(searchValues, dictAttr.Name) {
-								if value.Number == intVal {
-									matchedNames = append(matchedNames, value.Name)
-								}
-							}
-							if len(matchedNames) > 0 {
-								sort.Stable(sort.StringSlice(matchedNames))
-								attrStr = strings.Join(matchedNames, " / ")
-								break
-							}
-						}
-						attrStr = strconv.Itoa(intVal)
-					case 8:
-						attrStr = strconv.Itoa(int(binary.BigEndian.Uint64(attr)))
-					}
-
-				case dictionary.AttributeIPAddr, dictionary.AttributeIPv6Addr:
-					switch len(attr) {
-					case net.IPv4len, net.IPv6len:
-						attrStr = net.IP(attr).String()
-					}
-
-				case dictionary.AttributeIFID:
-					if len(attr) == 8 {
-						attrStr = net.HardwareAddr(attr).String()
-					}
-
+					attrStr = strconv.FormatUint(intVal, 10)
+				case 8:
+					attrStr = strconv.Itoa(int(binary.BigEndian.Uint64(attr)))
 				}
-			} else {
-				attrTypeStr = "#" + strconv.Itoa(int(attrsType))
-			}
 
-			if len(attrStr) == 0 {
-				attrStr = "0x" + hex.EncodeToString(attr)
-			}
+			case dictionary.AttributeIPAddr, dictionary.AttributeIPv6Addr:
+				switch len(attr) {
+				case net.IPv4len, net.IPv6len:
+					attrStr = net.IP(attr).String()
+				}
 
-			io.WriteString(w, "  ")
-			io.WriteString(w, attrTypeStr)
-			io.WriteString(w, " = ")
-			io.WriteString(w, attrStr)
-			io.WriteString(w, "\n")
+			case dictionary.AttributeIFID:
+				if len(attr) == 8 {
+					attrStr = net.HardwareAddr(attr).String()
+				}
+
+			}
+		} else {
+			attrTypeStr = "#" + strconv.Itoa(int(attrsType))
 		}
+
+		if len(attrStr) == 0 {
+			attrStr = "0x" + hex.EncodeToString(attr)
+		}
+
+		io.WriteString(w, "  ")
+		io.WriteString(w, attrTypeStr)
+		io.WriteString(w, " = ")
+		io.WriteString(w, attrStr)
+		io.WriteString(w, "\n")
 	}
+
 }
 
+/*
 type attributesElement struct {
 	Type  radius.Type
 	Attrs []radius.Attribute
@@ -185,3 +181,4 @@ type sortAttributesType []attributesElement
 func (s sortAttributesType) Len() int           { return len(s) }
 func (s sortAttributesType) Less(i, j int) bool { return s[i].Type < s[j].Type }
 func (s sortAttributesType) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
+*/
