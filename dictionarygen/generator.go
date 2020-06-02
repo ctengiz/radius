@@ -77,7 +77,7 @@ func (g *Generator) Generate(dict *dictionary.Dictionary) ([]byte, error) {
 			baseImports["net"] = struct{}{}
 		case dictionary.AttributeDate:
 			baseImports["time"] = struct{}{}
-		case dictionary.AttributeInteger, dictionary.AttributeInteger64:
+		case dictionary.AttributeShort, dictionary.AttributeInteger, dictionary.AttributeInteger64:
 			baseImports["strconv"] = struct{}{}
 		case dictionary.AttributeVSA:
 		case dictionary.AttributeByte:
@@ -185,7 +185,7 @@ func (g *Generator) Generate(dict *dictionary.Dictionary) ([]byte, error) {
 				baseImports["net"] = struct{}{}
 			case dictionary.AttributeDate:
 				baseImports["time"] = struct{}{}
-			case dictionary.AttributeInteger, dictionary.AttributeInteger64:
+			case dictionary.AttributeShort, dictionary.AttributeInteger, dictionary.AttributeInteger64:
 				baseImports["strconv"] = struct{}{}
 			case dictionary.AttributeByte:
 				baseImports["errors"] = struct{}{}
@@ -292,7 +292,7 @@ func (g *Generator) Generate(dict *dictionary.Dictionary) ([]byte, error) {
 		for _, value := range exAttr.Values {
 			attrIdent := identifier(value.Attribute)
 			valueIdent := identifier(value.Name)
-			p(&w, `	`, attrIdent, `_Value_`, valueIdent, ` `, attrIdent, ` = `, strconv.Itoa(value.Number))
+			p(&w, `	`, attrIdent, `_Value_`, valueIdent, ` `, attrIdent, ` = `, strconv.FormatUint(value.Number, 10))
 		}
 		p(&w, `)`)
 	}
@@ -313,6 +313,8 @@ func (g *Generator) Generate(dict *dictionary.Dictionary) ([]byte, error) {
 			g.genAttributeIPv6Prefix(&w, attr, nil)
 		case dictionary.AttributeDate:
 			g.genAttributeDate(&w, attr, nil)
+		case dictionary.AttributeShort:
+			g.genAttributeInteger(&w, attr, values, 16, nil)
 		case dictionary.AttributeInteger:
 			g.genAttributeInteger(&w, attr, values, 32, nil)
 		case dictionary.AttributeIFID:
@@ -342,6 +344,8 @@ func (g *Generator) Generate(dict *dictionary.Dictionary) ([]byte, error) {
 				g.genAttributeDate(&w, attr, vendor)
 			case dictionary.AttributeIFID:
 				g.genAttributeIFID(&w, attr, vendor)
+			case dictionary.AttributeShort:
+				g.genAttributeInteger(&w, attr, vendor.Values, 16, vendor)
 			case dictionary.AttributeInteger:
 				g.genAttributeInteger(&w, attr, vendor.Values, 32, vendor)
 			case dictionary.AttributeInteger64:
