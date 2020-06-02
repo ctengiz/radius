@@ -553,21 +553,23 @@ func ServiceType_Del(p *radius.Packet) {
 type FramedProtocol uint32
 
 const (
-	FramedProtocol_Value_PPP             FramedProtocol = 1
-	FramedProtocol_Value_SLIP            FramedProtocol = 2
-	FramedProtocol_Value_ARAP            FramedProtocol = 3
-	FramedProtocol_Value_GandalfSLML     FramedProtocol = 4
-	FramedProtocol_Value_XylogicsIPXSLIP FramedProtocol = 5
-	FramedProtocol_Value_X75Synchronous  FramedProtocol = 6
+	FramedProtocol_Value_PPP              FramedProtocol = 1
+	FramedProtocol_Value_SLIP             FramedProtocol = 2
+	FramedProtocol_Value_ARAP             FramedProtocol = 3
+	FramedProtocol_Value_GandalfSLML      FramedProtocol = 4
+	FramedProtocol_Value_XylogicsIPXSLIP  FramedProtocol = 5
+	FramedProtocol_Value_X75Synchronous   FramedProtocol = 6
+	FramedProtocol_Value_GPRS_PDP_Context FramedProtocol = 7
 )
 
 var FramedProtocol_Strings = map[FramedProtocol]string{
-	FramedProtocol_Value_PPP:             "PPP",
-	FramedProtocol_Value_SLIP:            "SLIP",
-	FramedProtocol_Value_ARAP:            "ARAP",
-	FramedProtocol_Value_GandalfSLML:     "Gandalf-SLML",
-	FramedProtocol_Value_XylogicsIPXSLIP: "Xylogics-IPX-SLIP",
-	FramedProtocol_Value_X75Synchronous:  "X.75-Synchronous",
+	FramedProtocol_Value_PPP:              "PPP",
+	FramedProtocol_Value_SLIP:             "SLIP",
+	FramedProtocol_Value_ARAP:             "ARAP",
+	FramedProtocol_Value_GandalfSLML:      "Gandalf-SLML",
+	FramedProtocol_Value_XylogicsIPXSLIP:  "Xylogics-IPX-SLIP",
+	FramedProtocol_Value_X75Synchronous:   "X.75-Synchronous",
+	FramedProtocol_Value_GPRS_PDP_Context: "GPRS-PDP-Context",
 }
 
 func (a FramedProtocol) String() string {
