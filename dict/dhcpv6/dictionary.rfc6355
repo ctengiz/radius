@@ -1,0 +1,20 @@
+# -*- text -*-
+# Copyright (C) 2020 The FreeRADIUS Server project and contributors
+# This work is licensed under CC-BY version 4.0 https://creativecommons.org/licenses/by/4.0
+# Version $Id: bfb0929840e3167e52e9e9181025de5a7a50e20c $
+##############################################################################
+#
+#  RFC 6355 - Definition of the UUID-Based DHCPv6 Unique Identifier (DUID-UUID)
+#
+#  $Id: bfb0929840e3167e52e9e9181025de5a7a50e20c $
+#
+##############################################################################
+
+STRUCT	Client-ID-DUID-UUID			Client-ID-DUID	4
+MEMBER		Client-ID-DUID-UUID-Value		octets[16]
+
+#
+#  Duplicate sub-struct as the server cannot (yet) reference structs
+#
+STRUCT	Server-ID-DUID-UUID			Server-ID-DUID	4
+MEMBER		Server-ID-DUID-UUID-Value		octets[16]

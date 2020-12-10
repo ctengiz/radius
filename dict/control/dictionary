@@ -1,0 +1,17 @@
+# -*- text -*-
+# Copyright (C) 2019 The FreeRADIUS Server project and contributors
+# This work is licensed under CC-BY version 4.0 https://creativecommons.org/licenses/by/4.0
+# Version $Id: 2d5af237151816b88ada002e5ea02d03f8b196d7 $
+##############################################################################
+#
+#  Dictionary for control sockets.
+#
+#  $Id: 2d5af237151816b88ada002e5ea02d03f8b196d7 $
+#
+##############################################################################
+
+PROTOCOL	Control		255
+
+#
+#  For now there are no attributes in the control socket space.
+#

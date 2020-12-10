@@ -1,0 +1,13 @@
+# -*- text -*-
+# Copyright (C) 2020 The FreeRADIUS Server project and contributors
+# This work is licensed under CC-BY version 4.0 https://creativecommons.org/licenses/by/4.0
+# Version $Id: 503320fc6fea05af2218563e3077bee0b36c7aa9 $
+#
+#	EAP-AKA attributes defined by 3gpp-ts24.139
+#
+
+#
+#  Skippable-Attributes
+#
+ATTRIBUTE	RQSI-Ind				142	octets
+ATTRIBUTE	RQSI-Res				143	octets

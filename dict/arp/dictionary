@@ -1,0 +1,16 @@
+# -*- text -*-
+# Copyright (C) 2020 The FreeRADIUS Server project and contributors
+# This work is licensed under CC-BY version 4.0 https://creativecommons.org/licenses/by/4.0
+# Version $Id: 7061c65e99eaa1612ddba1154f8ac3c25d901229 $
+#
+#	The FreeRADIUS dictionary for ARP
+#
+# Version:	$Id: 7061c65e99eaa1612ddba1154f8ac3c25d901229 $
+#
+
+PROTOCOL	ARP		8
+BEGIN-PROTOCOL	ARP
+
+$INCLUDE dictionary.rfc826
+
+END-PROTOCOL	ARP

@@ -1,0 +1,13 @@
+# -*- text -*-
+# Copyright (C) 2020 The FreeRADIUS Server project and contributors
+# This work is licensed under CC-BY version 4.0 https://creativecommons.org/licenses/by/4.0
+# Version $Id: fd4709ee58724af259dff4140428c43728de701f $
+##############################################################################
+#
+#  RFC 6422 - Relay-Supplied DHCP Options
+#
+#  $Id: fd4709ee58724af259dff4140428c43728de701f $
+#
+##############################################################################
+
+ATTRIBUTE	Relay-Supplied-Options			66	tlv		# Options see RFC 6422

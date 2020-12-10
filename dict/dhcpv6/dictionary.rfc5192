@@ -1,0 +1,14 @@
+# -*- text -*-
+# Copyright (C) 2020 The FreeRADIUS Server project and contributors
+# This work is licensed under CC-BY version 4.0 https://creativecommons.org/licenses/by/4.0
+# Version $Id: 569c6bf1d8bc4ca1f0880114371dab07d9b37bbb $
+##############################################################################
+#
+#  RFC 5192 - DHCP Options for Protocol for Carrying Authentication for
+#             Network Access (PANA) Authentication Agent
+#
+#  $Id: 569c6bf1d8bc4ca1f0880114371dab07d9b37bbb $
+#
+##############################################################################
+
+ATTRIBUTE	PANA-Authentication-Agent		40	ipv6addr array

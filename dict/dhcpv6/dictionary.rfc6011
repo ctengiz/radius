@@ -1,0 +1,13 @@
+# -*- text -*-
+# Copyright (C) 2020 The FreeRADIUS Server project and contributors
+# This work is licensed under CC-BY version 4.0 https://creativecommons.org/licenses/by/4.0
+# Version $Id: 615743744f0514d4af8dc057e0d36e1ff21b1d84 $
+##############################################################################
+#
+#  RFC 6011 - Session Initiation Protocol (SIP) User Agent Configuration
+#
+#  $Id: 615743744f0514d4af8dc057e0d36e1ff21b1d84 $
+#
+##############################################################################
+
+ATTRIBUTE	SIP-US-CS-Domain-List			58	string dns_label,array

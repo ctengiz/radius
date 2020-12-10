@@ -1,0 +1,16 @@
+# -*- text -*-
+# Copyright (C) 2020 The FreeRADIUS Server project and contributors
+# This work is licensed under CC-BY version 4.0 https://creativecommons.org/licenses/by/4.0
+# Version $Id: 603666ce530cfb3b3e11ad693ae2d3e4d178630e $
+#
+#	The FreeRADIUS Vendor-Specific dictionary for SNMP operations.
+#
+# Version:	$Id: 603666ce530cfb3b3e11ad693ae2d3e4d178630e $
+#
+
+PROTOCOL	SNMP		7	format=4
+BEGIN-PROTOCOL	SNMP
+
+$INCLUDE dictionary.freeradius
+
+END-PROTOCOL SNMP

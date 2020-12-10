@@ -1,0 +1,14 @@
+# -*- text -*-
+# Copyright (C) 2020 The FreeRADIUS Server project and contributors
+# This work is licensed under CC-BY version 4.0 https://creativecommons.org/licenses/by/4.0
+# Version $Id: 8a9533f91dd49fbc855cca0064f171a3f1c13073 $
+##############################################################################
+#
+#  RFC 6334 - Dynamic Host Configuration Protocol for IPv6 (DHCPv6) Option
+#             for Dual-Stack Lite.
+#
+#  $Id: 8a9533f91dd49fbc855cca0064f171a3f1c13073 $
+#
+##############################################################################
+
+ATTRIBUTE	AFTR-Name				64	string dns_label
